@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import logo from "../../assets/image.png"
 interface DashboardCardProps {
   title: string;
   description: string;
@@ -21,29 +21,23 @@ export function DashboardCard({
   variant = "default",
   className,
 }: DashboardCardProps) {
-  const variantClasses = {
-    default: "health-card health-card-hover bg-card text-card-foreground",
-    primary: "health-card health-card-hover bg-primary text-primary-foreground",
-    secondary: "health-card health-card-hover bg-secondary text-secondary-foreground",
-    outline: "health-card health-card-hover bg-background border-2 hover:bg-muted/20",
-  };
 
   return (
     <Link
       to={to}
       className={cn(
-        "block transition-all duration-300 relative",
-        variantClasses[variant],
+        "block transition-all bg-primary/10 duration-300 relative hover:bg-primary/60 py-5 px-3 rounded-2xl hover:rounded-none hover:drop-shadow-xl hover:scale-105",
+        
         className
       )}
     >
       <div className="flex flex-col items-center text-center md:items-start md:text-left md:flex-row gap-4">
         <div className={cn(
           "flex shrink-0 items-center justify-center rounded-full p-2",
-          variant === "default" && "bg-primary/10 text-primary",
-          variant === "primary" && "bg-primary-foreground/10 text-primary-foreground",
-          variant === "secondary" && "bg-secondary-foreground/10 text-secondary-foreground",
-          variant === "outline" && "bg-primary/10 text-primary",
+          variant === "default" && "bg-primary/10 text-black",
+          variant === "primary" && "bg-primary-foreground/10 text-black",
+          variant === "secondary" && "bg-secondary-foreground/10 text-black",
+          variant === "outline" && "bg-primary/10 text-black",
         )}>
           <Icon className="h-8 w-8" />
         </div>

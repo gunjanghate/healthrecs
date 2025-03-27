@@ -47,7 +47,7 @@ export function StatCard({
       )}
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium text-base">{title}</h3>
+        <h3 className="font-semibold text-base">{title}</h3>
         <div className={cn(
           "p-2 rounded-full",
           variant === "default" && "bg-primary/10",

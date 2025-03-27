@@ -1,10 +1,11 @@
 
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { BellRing, ChevronDown, Menu, UserCircle, X, ClipboardList, Home, Users, Settings, FileText, Stethoscope, LogOut } from "lucide-react";
+import { BellRing, ChevronDown, Menu, UserCircle, X, ClipboardList, Home, Users, Settings, FileText, Stethoscope, LogOut, LayoutDashboard } from "lucide-react";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import logo from "../../assets/image.png"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +23,7 @@ export function Header() {
   // Define the navigation items based on the user's role
   const getNavItems = () => {
     const commonItems = [
-      { label: "Dashboard", path: "/", icon: <Home className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
+      { label: "Dashboard", path: "/", icon: <LayoutDashboard className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
       { label: "Patients", path: "/patients", icon: <Users className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
     ];
 
@@ -62,10 +63,10 @@ export function Header() {
             </Button>
           </div>
           <Link to="/" className="flex items-center gap-2">
-            <div className="rounded-md bg-primary p-1">
-              <span className="text-primary-foreground font-bold text-lg">HR</span>
-            </div>
-            <span className="font-semibold hidden md:inline-block">HealthRecs</span>
+          <div className="mx-auto text-primary-foreground  w-8 h-8 flex items-center justify-center rounded-xl mb-4">
+            <span className="font-bold text-xl"><img src={logo} alt="HR" className="w-fit h-fit" /></span>
+          </div>
+          <h2 className="text-xl font-extrabold tracking-tighter"> <span className="text-primary">H</span>ealth<span className="text-primary">R</span>ecs</h2>
           </Link>
         </div>
 

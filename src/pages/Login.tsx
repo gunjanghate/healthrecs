@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { useToast } from "@/components/ui/use-toast";
-
+import logo from "../assets/image.png"
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -64,10 +64,10 @@ const Login = () => {
 
       <div className="health-card max-w-md w-full p-8 space-y-8">
         <div className="text-center">
-          <div className="mx-auto bg-primary text-primary-foreground w-12 h-12 flex items-center justify-center rounded-xl mb-4">
-            <span className="font-bold text-xl">HR</span>
+          <div className="mx-auto text-primary-foreground  w-12 h-12 flex items-center justify-center rounded-xl mb-4">
+            <span className="font-bold text-xl"><img src={logo} alt="HR" /></span>
           </div>
-          <h1 className="text-2xl font-bold">HealthRecs Login</h1>
+          <h2 className="text-3xl font-extrabold tracking-tighter border-b-4 pb-2 border-blue-400"> <span className="text-primary">H</span>ealth<span className="text-primary">R</span>ecs Login</h2>
           <p className="text-muted-foreground mt-2">
             Sign in to access the health records system
           </p>

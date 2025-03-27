@@ -88,9 +88,9 @@ const Dashboard = () => {
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground">
-              Welcome back, {user?.name}
+            <h1 className="text-3xl font-extrabold tracking-tight">Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-400 font-medium mt-1">
+              Welcome back, <span className="font-semibold dark:text-white/70 text-black/70">{user?.name}</span>
             </p>
           </div>
           
@@ -235,7 +235,7 @@ const Dashboard = () => {
                 description="Add a new patient to the system"
                 icon={UserPlus}
                 to="/new-patient"
-                variant="primary"
+               
               />
               <DashboardCard
                 title="Patient Records"
