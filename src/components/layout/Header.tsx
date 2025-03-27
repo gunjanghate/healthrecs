@@ -6,6 +6,7 @@ import { ModeToggle } from "@/components/ui/ModeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import logo from "../../assets/image.png"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -116,15 +117,47 @@ export function Header() {
           </div>
         )}
 
-        <div className="flex items-center gap-4">
+
+          <div className="flex items-center gap-4">
+
+          <Dialog>
+        <DialogTrigger asChild>
           <Button variant="ghost" size="icon" className="relative">
             <BellRing className="h-5 w-5" strokeWidth={2.5} />
             <span className="absolute top-1 right-1 flex h-2 w-2 rounded-full bg-health-danger"></span>
             <span className="sr-only">Notifications</span>
           </Button>
-          
+        </DialogTrigger>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Notifications</DialogTitle>
+            <DialogDescription>
+              Here are your latest notifications:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 border rounded-md shadow-sm">
+              <h4 className="font-medium">New Patient Added</h4>
+              <p className="text-sm text-muted-foreground">
+                A new patient has been added to the system.
+              </p>
+            </div>
+            <div className="p-4 border rounded-md shadow-sm">
+              <h4 className="font-medium">Appointment Reminder</h4>
+              <p className="text-sm text-muted-foreground">
+                You have an appointment scheduled for tomorrow.
+              </p>
+            </div>
+            <div className="p-4 border rounded-md shadow-sm">
+              <h4 className="font-medium">System Update</h4>
+              <p className="text-sm text-muted-foreground">
+                The system will undergo maintenance at midnight.
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
           <ModeToggle />
-          
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -169,8 +202,9 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          </div>
         </div>
-      </div>
+      
     </header>
   );
 }
