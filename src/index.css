@@ -102,19 +102,33 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight;
+    @apply font-heading tracking-tight font-bold;
+    position: relative;
+    padding-bottom: 0.25rem;
   }
 
   h1 {
-    @apply text-3xl md:text-4xl font-semibold;
+    @apply text-3xl md:text-4xl font-bold text-foreground;
+    letter-spacing: -0.025em;
+  }
+
+  h1::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 80px;
+    height: 3px;
+    background-color: hsl(var(--primary));
   }
 
   h2 {
-    @apply text-2xl md:text-3xl font-semibold;
+    @apply text-2xl md:text-3xl font-semibold text-foreground;
+    letter-spacing: -0.025em;
   }
 
   h3 {
-    @apply text-xl md:text-2xl font-medium;
+    @apply text-xl md:text-2xl font-bold text-foreground;
   }
 
   .text-display {

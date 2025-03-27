@@ -75,13 +75,17 @@ export function Header() {
             <Link
               key={item.path}
               to={item.path}
-              className={`text-base font-medium transition-colors hover:text-primary ${
+              className={`text-base font-medium transition-colors hover:text-primary relative pb-1 group ${
                 location.pathname === item.path
                   ? "text-primary"
                   : "text-foreground/80"
               }`}
             >
               {item.label}
+              <span 
+                className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary transform transition-transform duration-300 
+                ${location.pathname === item.path ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}
+              />
             </Link>
           ))}
         </nav>
@@ -94,11 +98,12 @@ export function Header() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`text-lg font-medium p-2 transition-colors hover:text-primary ${
-                    location.pathname === item.path
-                      ? "text-primary bg-muted rounded-md"
-                      : "text-foreground/80"
-                  }`}
+                  className={`text-lg font-medium p-2 transition-colors hover:text-primary relative
+                    ${
+                      location.pathname === item.path
+                        ? "text-primary border-l-4 border-primary pl-4"
+                        : "text-foreground/80 pl-4"
+                    }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
