@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Bell, ChevronDown, Menu, User, X } from "lucide-react";
+import { BellRing, ChevronDown, Menu, UserCircle, X, ClipboardList, Home, Users, Settings, FileText, Stethoscope, LogOut } from "lucide-react";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -22,23 +22,23 @@ export function Header() {
   // Define the navigation items based on the user's role
   const getNavItems = () => {
     const commonItems = [
-      { label: "Dashboard", path: "/" },
-      { label: "Patients", path: "/patients" },
+      { label: "Dashboard", path: "/", icon: <Home className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
+      { label: "Patients", path: "/patients", icon: <Users className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
     ];
 
     if (user?.role === "admin") {
       return [
         ...commonItems,
-        { label: "Reports", path: "/reports" },
-        { label: "Settings", path: "/settings" },
+        { label: "Reports", path: "/reports", icon: <FileText className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
+        { label: "Settings", path: "/settings", icon: <Settings className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
       ];
     }
 
     if (user?.role === "doctor") {
       return [
         ...commonItems,
-        { label: "Treatment", path: "/treatment" },
-        { label: "Reports", path: "/reports" },
+        { label: "Treatment", path: "/treatment", icon: <Stethoscope className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
+        { label: "Reports", path: "/reports", icon: <FileText className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
       ];
     }
 
@@ -58,7 +58,7 @@ export function Header() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMenuOpen ? <X className="h-5 w-5" strokeWidth={2.5} /> : <Menu className="h-5 w-5" strokeWidth={2.5} />}
             </Button>
           </div>
           <Link to="/" className="flex items-center gap-2">
@@ -75,12 +75,13 @@ export function Header() {
             <Link
               key={item.path}
               to={item.path}
-              className={`text-base font-medium transition-colors hover:text-primary relative pb-1 group ${
+              className={`text-base font-medium transition-colors hover:text-primary relative pb-1 group flex items-center ${
                 location.pathname === item.path
                   ? "text-primary"
                   : "text-foreground/80"
               }`}
             >
+              {item.icon}
               {item.label}
               <span 
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary transform transition-transform duration-300 
@@ -98,7 +99,7 @@ export function Header() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`text-lg font-medium p-2 transition-colors hover:text-primary relative
+                  className={`text-lg font-medium p-2 transition-colors hover:text-primary relative flex items-center
                     ${
                       location.pathname === item.path
                         ? "text-primary border-l-4 border-primary pl-4"
@@ -106,6 +107,7 @@ export function Header() {
                     }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
+                  {item.icon}
                   {item.label}
                 </Link>
               ))}
@@ -115,7 +117,7 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
+            <BellRing className="h-5 w-5" strokeWidth={2.5} />
             <span className="absolute top-1 right-1 flex h-2 w-2 rounded-full bg-health-danger"></span>
             <span className="sr-only">Notifications</span>
           </Button>
@@ -126,11 +128,11 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative pl-2 pr-7">
-                  <User className="h-5 w-5 mr-2" />
+                  <UserCircle className="h-5 w-5 mr-2" strokeWidth={2.5} />
                   <span className="max-w-[100px] truncate text-sm hidden sm:inline-block">
                     {user.name}
                   </span>
-                  <ChevronDown className="h-4 w-4 absolute right-2 top-1/2 transform -translate-y-1/2" />
+                  <ChevronDown className="h-4 w-4 absolute right-2 top-1/2 transform -translate-y-1/2" strokeWidth={2.5} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -142,13 +144,16 @@ export function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => switchRole("doctor")}>
+                  <Stethoscope className="h-4 w-4 mr-2" strokeWidth={2.5} />
                   Switch to Doctor Role
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => switchRole("staff")}>
+                  <ClipboardList className="h-4 w-4 mr-2" strokeWidth={2.5} />
                   Switch to Staff Role
                 </DropdownMenuItem>
                 {user.role === "admin" ? null : (
                   <DropdownMenuItem onClick={() => switchRole("admin")}>
+                    <Settings className="h-4 w-4 mr-2" strokeWidth={2.5} />
                     Switch to Admin Role
                   </DropdownMenuItem>
                 )}
@@ -157,6 +162,7 @@ export function Header() {
                   className="text-destructive focus:text-destructive"
                   onClick={logout}
                 >
+                  <LogOut className="h-4 w-4 mr-2" strokeWidth={2.5} />
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
