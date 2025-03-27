@@ -26,7 +26,7 @@ export function Layout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col font-sans">
       {isAuthenticated && <Header />}
       <main className="flex-1">
         <div className="container max-w-screen-2xl py-6 animate-fade-in">
