@@ -4,25 +4,25 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ModeToggle() {
-  const [theme, setTheme] = React.useState<"light" | "dark">(
-    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
-      ? "dark" 
-      : "light"
-  );
+  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+  
+  // Initialize theme from localStorage on component mount
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme("dark");
+    }
+  }, []);
 
+  // Apply theme changes to document and localStorage
   React.useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
-
-  React.useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-  }, []);
 
   return (
     <Button
