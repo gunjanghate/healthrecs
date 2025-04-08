@@ -390,8 +390,8 @@ const PatientDetails = () => {
                       <Clipboard className="h-5 w-5 mr-2 text-muted-foreground" />
                       Visit History
                     </h3>
-                    <Link to={`/${patient.regNo}/visits`}>
-                    <Button onClick={() => navigate(`/${patient.regNo}/visits`, { state: { regNo: patient.regNo } })} size="sm">
+                    <Link to={`/${id}/visits`}>
+                    <Button size="sm">
                       Add New Visit
                     </Button>
                     </Link>
