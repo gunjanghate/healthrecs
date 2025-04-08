@@ -31,7 +31,6 @@ export function Header() {
     if (user?.role === "admin") {
       return [
         ...commonItems,
-        { label: "Reports", path: "/reports", icon: <FileText className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
         { label: "Settings", path: "/settings", icon: <Settings className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
       ];
     }
@@ -40,7 +39,6 @@ export function Header() {
       return [
         ...commonItems,
         { label: "Treatment", path: "/treatment", icon: <Stethoscope className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
-        { label: "Reports", path: "/reports", icon: <FileText className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
       ];
     }
 

@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-
+import PatientDetails from "./components/PatientDetails";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Patients from "./pages/Patients";
@@ -30,6 +30,7 @@ const App = () => (
             <Route path="/new-patient" element={<NewPatient />} />
             <Route path="/treatment" element={<Treatment />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/patients/:id" element={<PatientDetails />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

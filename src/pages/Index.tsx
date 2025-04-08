@@ -203,15 +203,15 @@ const Dashboard = () => {
                 icon={Users}
                 trend={5}
               />
-              <StatCard
+              {/* <StatCard
                 title="New Patients"
                 value="42"
                 description="Added this month"
                 icon={UserPlus}
                 variant="info"
                 trend={12}
-              />
-              <StatCard
+              /> */}
+              {/* <StatCard
                 title="Follow-ups Due"
                 value="18"
                 description="Pending appointments"
@@ -226,7 +226,7 @@ const Dashboard = () => {
                 icon={FileText}
                 variant="danger"
                 trend={0}
-              />
+              /> */}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
