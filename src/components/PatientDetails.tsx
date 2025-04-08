@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -130,6 +130,8 @@ const PatientDetails = () => {
         setLoading(true);
         const response = await axios.get(`https://health-link-backend.vercel.app/record/${id}`);
         setPatient(response.data);
+        console.log("Patient data:", response.data);
+        // console.log("RegNo:",patient.regNo);
         setError(null);
       } catch (err) {
         console.error("Error fetching patient:", err);
@@ -225,7 +227,7 @@ const PatientDetails = () => {
           <Card className="md:col-span-1">
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
-                Patient Profile
+              <h1 className="text-3xl font-bold tracking-tight">Patient Profile</h1>
                 {getConditionBadge(patientCondition)}
               </CardTitle>
               <CardDescription>
@@ -388,10 +390,11 @@ const PatientDetails = () => {
                       <Clipboard className="h-5 w-5 mr-2 text-muted-foreground" />
                       Visit History
                     </h3>
-                    
-                    <Button size="sm">
+                    <Link to={`/${patient.regNo}/visits`}>
+                    <Button onClick={() => navigate(`/${patient.regNo}/visits`, { state: { regNo: patient.regNo } })} size="sm">
                       Add New Visit
                     </Button>
+                    </Link>
                   </div>
                   
                   {patient.visits && patient.visits.length > 0 ? (

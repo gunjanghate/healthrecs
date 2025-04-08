@@ -13,6 +13,7 @@ import NewPatient from "./pages/NewPatient";
 import Treatment from "./pages/Treatment";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
+import VisitForm from "./components/VisitForm";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/treatment" element={<Treatment />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/patients/:id" element={<PatientDetails />} />
+            <Route path="/:id/visits" element={<VisitForm />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
