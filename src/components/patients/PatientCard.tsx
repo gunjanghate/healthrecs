@@ -42,7 +42,7 @@ export function PatientCard({
   };
 
   return (
-    <Link to={`/patients/${id}`} className={cn("block", className)}>
+    <Link to={`/patients/${regNo}`} className={cn("block", className)}>
       <div className="health-card health-card-hover">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
