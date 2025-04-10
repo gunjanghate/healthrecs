@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Layout } from "@/components/layout/Layout";
-import { SearchBar } from "@/components/dashboard/SearchBar";
-import { DashboardCard } from "@/components/dashboard/DashboardCard";
-import { StatCard } from "@/components/dashboard/StatCard";
-import { PatientCard } from "@/components/patients/PatientCard";
-import { useAuth } from "@/context/AuthContext";
-import { CalendarDays, FileText, ListFilter, Plus, User, UserPlus, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom"; // Add this import for Link
-import {
+ import { Layout } from "@/components/layout/Layout";
+ import { SearchBar } from "@/components/dashboard/SearchBar";
+ import { DashboardCard } from "@/components/dashboard/DashboardCard";
+ import { StatCard } from "@/components/dashboard/StatCard";
+ import { PatientCard } from "@/components/patients/PatientCard";
+ import { useAuth } from "@/context/AuthContext";
+ import { CalendarDays, FileText, ListFilter, Plus, User, UserPlus, Users } from 
+"lucide-react";
+ import { Button } from "@/components/ui/button";
+ import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import axios from "axios";
-
-// Define a type for patient data based on the actual API response
-interface Patient {
+ } from "@/components/ui/dialog";
+ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+ import axios from "axios";
+ // Define a type for patient data based on the actual API response
+ interface Patient {
   _id: string;
   regNo: string;
   name: string;
@@ -39,9 +38,48 @@ interface Patient {
   }>;
   createdAt: string;
   [key: string]: any; // For any other fields the patient might have
-}
-
-const Dashboard = () => {
+ }
+ const determineCondition = (patient: Patient): "critical" | "followup" | "stable" =>
+ {
+  if (!patient.otherAilments) return "stable";
+  
+  // Critical conditions
+  if (
+    patient.otherAilments.cancer || 
+    patient.otherAilments.tuberculosis || 
+    patient.otherAilments.ischemicHeartDisease
+  ) {
+    return "critical";
+  }
+  
+  // Follow-up conditions
+  if (
+    patient.otherAilments.hypertension || 
+    patient.otherAilments.parkinsons ||
+    patient.otherAilments.majorSurgery ||
+    patient.otherAilments.relapse
+  ) {
+    return "followup";
+  }
+  
+  // Default to stable
+  return "stable";
+ };
+ // Label map for better display of ailment names
+ const ailmentLabels: Record<string, string> = {
+  hypertension: "Hypertension",
+  ischemicHeartDisease: "Ischemic Heart Disease",
+  bronchialAsthma: "Bronchial Asthma",
+  cancer: "Cancer",
+  tuberculosis: "Tuberculosis",
+  parkinsons: "Parkinson's Disease",
+  bph: "Benign Prostatic Hyperplasia",
+  tkr: "Total Knee Replacement",
+  skinDisease: "Skin Disease",
+  relapse: "Relapse",
+  majorSurgery: "Major Surgery"
+ };
+ const Dashboard = () => {
   const { user } = useAuth();
   const [recentPatients, setRecentPatients] = useState<Patient[]>([]);
   const [totalPatients, setTotalPatients] = useState(0);
@@ -49,29 +87,29 @@ const Dashboard = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchPatients = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await axios.get("https://health-link-backend.vercel.app/records");
+        const response = await 
+axios.get("https://health-link-backend.vercel.app/records");
         
         // Check if response.data exists and is an array
-        if (response.data && Array.isArray(response.data)) {
-          // Sort by createdAt date (newest first)
-          const sortedPatients = [...response.data].sort((a, b) => {
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-          });
-          
-          setRecentPatients(sortedPatients);
-          setTotalPatients(sortedPatients.length);
-        } else {
-          // If the structure isn't as expected, initialize with empty arrays
-          setRecentPatients([]);
-          setTotalPatients(0);
-          console.warn("API response format is unexpected:", response.data);
-        }
+           // Check if response.data exists and is an array
+           if (response.data && Array.isArray(response.data)) {
+            // Sort by createdAt date (newest first)
+            const sortedPatients = [...response.data].sort((a, b) => {
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            
+            setRecentPatients(sortedPatients);
+            setTotalPatients(sortedPatients.length);
+          } else {
+            // If the structure isn't as expected, initialize with empty arrays
+            setRecentPatients([]);
+            setTotalPatients(0);
+          }  
       } catch (error) {
         console.error("Error fetching patient records:", error);
         setError("Failed to load patient data. Please try again later.");
@@ -82,7 +120,6 @@ const Dashboard = () => {
         setIsLoading(false);
       }
     };
-
     fetchPatients();
   }, []);
   
@@ -105,7 +142,8 @@ const Dashboard = () => {
           const searchField = 
             type === "name" ? (patient.name || "") : 
             type === "regNo" ? (patient.regNo || "") : 
-            type === "phone" ? (patient.mobileNo || "") : // Note: API uses mobileNo not phone
+            type === "phone" ? (patient.mobileNo || "") : // Note: API uses mobileNo
+
             "";
             
           return searchField.toLowerCase().includes(query.toLowerCase());
@@ -119,7 +157,6 @@ const Dashboard = () => {
       setIsSearching(false);
     }, 500);
   };
-
   // Helper function to adapt the patient data for PatientCard component
   const adaptPatientForCard = (patient: Patient) => {
     // Map the patient properties to match what PatientCard expects
@@ -137,27 +174,93 @@ const Dashboard = () => {
       // Add any other fields needed by PatientCard
     };
   };
-
-  // Get only the first 3 patients for display
-  const recentPatientsToShow = recentPatients.slice(0, 3);
-  const hasMorePatients = recentPatients.length > 3;
-
   return (
     <Layout>
       <div className="space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between 
+gap-4">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">Dashboard</h1>
             <p className="text-gray-600 dark:text-gray-400 font-medium mt-1">
-              Welcome back, <span className="font-semibold dark:text-white/70 text-black/70">{user?.name || "User"}</span>
+              Welcome back, <span className="font-semibold dark:text-white/70 
+text-black/70">{user?.name || "User"}</span>
             </p>
           </div>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="w-full md:w-auto" size="lg">
+                <UserPlus className="mr-2 h-5 w-5" />
+                New Patient
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>Register New Patient</DialogTitle>
+                <DialogDescription>
+                  Quick registration form for new patients.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <Tabs defaultValue="quick" className="mt-4">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="quick">Quick Entry</TabsTrigger>
+                  <TabsTrigger value="full">Full Registration</TabsTrigger>
+                </TabsList>
+                <TabsContent value="quick" className="space-y-4 py-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="name" className="text-sm font-medium">
+                        Patient Name *
+                      </label>
+                      <input id="name" className="health-input w-full" />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="phone" className="text-sm font-medium">
+                        Phone Number *
+                      </label>
+                      <input id="phone" className="health-input w-full" />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="age" className="text-sm font-medium">
+                        Age *
+                      </label>
+                      <input id="age" type="number" className="health-input w-full" 
+/>
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="gender" className="text-sm font-medium">
+                        Gender *
+                      </label>
+                      <select id="gender" className="health-input w-full">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <Button className="w-full">Register & Continue</Button>
+                </TabsContent>
+                <TabsContent value="full" className="py-4">
+                  <p className="text-center text-muted-foreground pb-4">
+                    For full registration, please go to the{" "}
+                    <a href="/new-patient" className="text-primary hover:underline">
+                      New Patient
+                    </a>{" "}
+                    page.
+                  </p>
+                  <Button className="w-full" variant="outline" asChild>
+                    <a href="/new-patient">Go to Full Registration</a>
+                  </Button>
+                </TabsContent>
+              </Tabs>
+            </DialogContent>
+          </Dialog>
         </div>
-
         <div className="w-full flex justify-center">
           <SearchBar onSearch={handleSearch} />
         </div>
-
         {isLoading ? (
           <div className="flex justify-center py-12">
             <div className="animate-pulse text-center">
@@ -196,7 +299,11 @@ const Dashboard = () => {
             </div>
             <div className="space-y-4">
               {searchResults.map((patient) => (
-                <PatientCard condition={"stable"} key={patient._id} {...adaptPatientForCard(patient)} />
+                <PatientCard 
+                  condition={determineCondition(patient)}
+                  key={patient._id} 
+                  {...adaptPatientForCard(patient)} 
+                />
               ))}
             </div>
           </div>
@@ -211,7 +318,6 @@ const Dashboard = () => {
                 trend={5}
               />
             </div>
-
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <DashboardCard
                 title="Register New Patient"
@@ -232,30 +338,36 @@ const Dashboard = () => {
                 to="/treatment"
               />
             </div>
-
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Recent Patients</h2>
+                <Button variant="ghost" size="sm" asChild>
+                  <a href="/patients">
+                    View All
+                  </a>
+                </Button>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <Button variant="outline" size="sm">
+                  <ListFilter className="mr-1 h-4 w-4" />
+                  Filter
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Plus className="mr-1 h-4 w-4" />
+                  Add Patient Note
+                </Button>
               </div>
               
               <div className="space-y-4">
-                {recentPatientsToShow.length > 0 ? (
-                  <>
-                    {recentPatientsToShow.map((patient) => (
-                      <PatientCard condition={"stable"} key={patient._id} {...adaptPatientForCard(patient)} />
-                    ))}
-                    
-                    {hasMorePatients && (
-                      <div className="flex justify-center mt-4">
-                        <Link to="/patients" className="text-cyan-500 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center gap-2">
-                          <span>View more patients</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                          </svg>
-                        </Link>
-                      </div>
-                    )}
-                  </>
+                {recentPatients.length > 0 ? (
+                  recentPatients.map((patient) => (
+                    <PatientCard 
+                      condition={determineCondition(patient)}
+                      key={patient._id} 
+                      {...adaptPatientForCard(patient)} 
+                    />
+                  ))
                 ) : (
                   <div className="text-center py-8 text-gray-500">
                     <p>No recent patients found.</p>
@@ -268,6 +380,5 @@ const Dashboard = () => {
       </div>
     </Layout>
   );
-};
-
-export default Dashboard;
+ };
+ export default Dashboard;
