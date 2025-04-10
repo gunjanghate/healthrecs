@@ -1,69 +1,55 @@
-# Welcome to your Lovable project
+# 🩺 HealthRecs
 
-## Project info
+A full-stack web application for managing health records using OCR. The system automatically extracts text from uploaded images (e.g., prescriptions, reports) and fills out patient forms with relevant data. Built with a modern stack: **React + Vite** frontend, **Node.js + Express** backend, **MongoDB** database, and a **Python FastAPI** OCR microservice.
 
-**URL**: https://lovable.dev/projects/557414f8-47a4-4909-9e0f-7f348f0e30c5
+---
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+- Upload medical documents (images/PDFs)
+- OCR using Python (Tesseract or EasyOCR)
+- Auto-fill patient health record forms
+- Store and retrieve records from MongoDB
+- RESTful API with Express
+- Clean and modern UI with React + Vite
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/557414f8-47a4-4909-9e0f-7f348f0e30c5) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
+**Frontend**:
 - React
-- shadcn-ui
-- Tailwind CSS
+- Vite
+- TailwindCSS (optional)
+- Axios
 
-## How can I deploy this project?
+**Backend**:
+- Node.js
+- Express.js
+- MongoDB (with Mongoose)
 
-Simply open [Lovable](https://lovable.dev/projects/557414f8-47a4-4909-9e0f-7f348f0e30c5) and click on Share -> Publish.
+**OCR Microservice**:
+- Python 3.x
+- FastAPI
+- Tesseract OCR / EasyOCR
 
-## I want to use a custom domain - is that possible?
+---
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## 🚀 Getting Started
+
+### 🔧 Prerequisites
+
+- Node.js and npm
+- Python 3.x
+- MongoDB (local or Atlas)
+- Tesseract OCR installed (if using `pytesseract`)
+
+---
+
+## 🧩 Install Dependencies
+
+#### 1. Frontend
+
+```bash
+cd healthrecs
+npm install
