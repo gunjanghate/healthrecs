@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clipboard, FileText, Save, UserPlus } from "lucide-react";
+import { ArrowLeft, Clipboard, FileText, Save, UserPlus, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import axios from 'axios';
+import ImageUploadModal from "@/components/ImageUpload"; // Import the new component
 
 const NewPatient = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   
   const [formData, setFormData] = useState({
     regNo: '',
@@ -31,7 +33,6 @@ const NewPatient = () => {
     previousOccupation: '',
     disablitiyStatus: '',
     otherAilments: {},
-    
   });
   
   const handleChange = (e) => {
@@ -60,7 +61,6 @@ const NewPatient = () => {
     }
   };
   
-
   const handleAilmentChange = (e) => {
     const { name, checked } = e.target;
     setFormData({
@@ -148,13 +148,24 @@ const NewPatient = () => {
   return (
     <Layout>
       <div className="space-y-8 max-w-4xl mx-auto">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/patients">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex justify-center items-center">
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/patients">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold tracking-tight">Register New Patient</h1>
+          </div>
+
+          <Button 
+            variant="outline" 
+            onClick={() => setIsUploadModalOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Upload className="h-4 w-4" />
+            Upload Image
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">Register New Patient</h1>
         </div>
         
         <div className="space-y-8">
@@ -560,6 +571,13 @@ const NewPatient = () => {
           </Tabs>
         </div>
       </div>
+      
+      {/* Image Upload Modal */}
+      <ImageUploadModal 
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        setFormData={setFormData}
+      />
     </Layout>
   );
 };

@@ -14,6 +14,7 @@ import Treatment from "./pages/Treatment";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 import VisitForm from "./components/VisitForm";
+import ImageUpload from "./components/ImageUpload";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/reports" element={<Reports />} />
             <Route path="/patients/:id" element={<PatientDetails />} />
             <Route path="/:id/visits" element={<VisitForm />} />
+            <Route path="/image-upload" element={<ImageUpload />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
