@@ -51,5 +51,5 @@ A full-stack web application for managing health records using OCR. The system a
 #### 1. Frontend
 
 ```bash
-cd 
+cd healthrecs
 npm install
