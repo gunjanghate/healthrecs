@@ -142,76 +142,7 @@ const Dashboard = () => {
               Welcome back, <span className="font-semibold dark:text-white/70 text-black/70">{user?.name || "User"}</span>
             </p>
           </div>
-          
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="w-full md:w-auto" size="lg">
-                <UserPlus className="mr-2 h-5 w-5" />
-                New Patient
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Register New Patient</DialogTitle>
-                <DialogDescription>
-                  Quick registration form for new patients.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <Tabs defaultValue="quick" className="mt-4">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="quick">Quick Entry</TabsTrigger>
-                  <TabsTrigger value="full">Full Registration</TabsTrigger>
-                </TabsList>
-                <TabsContent value="quick" className="space-y-4 py-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label htmlFor="name" className="text-sm font-medium">
-                        Patient Name *
-                      </label>
-                      <input id="name" className="health-input w-full" />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="phone" className="text-sm font-medium">
-                        Phone Number *
-                      </label>
-                      <input id="phone" className="health-input w-full" />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="age" className="text-sm font-medium">
-                        Age *
-                      </label>
-                      <input id="age" type="number" className="health-input w-full" />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="gender" className="text-sm font-medium">
-                        Gender *
-                      </label>
-                      <select id="gender" className="health-input w-full">
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                  </div>
-                  <Button className="w-full">Register & Continue</Button>
-                </TabsContent>
-                <TabsContent value="full" className="py-4">
-                  <p className="text-center text-muted-foreground pb-4">
-                    For full registration, please go to the{" "}
-                    <a href="/new-patient" className="text-primary hover:underline">
-                      New Patient
-                    </a>{" "}
-                    page.
-                  </p>
-                  <Button className="w-full" variant="outline" asChild>
-                    <a href="/new-patient">Go to Full Registration</a>
-                  </Button>
-                </TabsContent>
-              </Tabs>
-            </DialogContent>
-          </Dialog>
+
         </div>
 
         <div className="w-full flex justify-center">

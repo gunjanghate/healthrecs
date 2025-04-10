@@ -92,7 +92,7 @@ const Treatment = () => {
                 <ArrowLeft className="h-5 w-5" />
               </a>
             </Button>
-            <h1 className="text-3xl font-bold tracking-tight">Patient Records</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Treatment Entry</h1>
           </div>
         </div>
         

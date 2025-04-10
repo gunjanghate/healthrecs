@@ -176,7 +176,7 @@ const Patients = () => {
           </div>
           
           <Button size="lg" asChild>
-            <a href="/new-patient">
+            <a href="https://healthrecs.vercel.app/new-patient">
               <UserPlus className="mr-2 h-5 w-5" />
               New Patient
             </a>
