@@ -1,44 +1,85 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Layout } from "@/components/layout/Layout";
-import { SearchBar } from "@/components/dashboard/SearchBar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Check, Clock, FileText, User } from "lucide-react";
+import { ArrowLeft, Calendar, Plus, FileText, User, Search } from "lucide-react";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Treatment = () => {
-  const [searchPerformed, setSearchPerformed] = useState(false);
-  const [patientFound, setPatientFound] = useState(false);
-  const [treatmentSaved, setTreatmentSaved] = useState(false);
+  const [patients, setPatients] = useState([]);
+  const [filteredPatients, setFilteredPatients] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const searchInputRef = useRef(null);
   
-  const handleSearch = (query: string, type: string) => {
-    setSearchPerformed(true);
+  // Debounce function to limit filter operations
+  const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
     
-    // Mock API call
-    setTimeout(() => {
-      if (query.toLowerCase().includes("arun") || query === "9876543210" || query === "REG-2023-0042") {
-        setPatientFound(true);
-      } else {
-        setPatientFound(false);
-        if (query) {
-          toast.error("Patient not found", {
-            description: "No patient matches the search criteria.",
-          });
-        }
-      }
-    }, 800);
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value, delay]);
+    
+    return debouncedValue;
   };
   
-  const handleSaveTreatment = (e: React.FormEvent) => {
-    e.preventDefault();
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  useEffect(() => {
+    // Fetch all patients when component mounts
+    const fetchPatients = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get("https://health-link-backend.vercel.app/records");
+        setPatients(response.data);
+        setFilteredPatients(response.data);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error fetching patients:", err);
+        setError("Failed to load patients. Please try again later.");
+        setIsLoading(false);
+        toast.error("Failed to load patients", {
+          description: "Please check your connection and try again.",
+        });
+      }
+    };
+
+    fetchPatients();
+  }, []);
+
+  // Filter patients whenever debounced search query changes
+  useEffect(() => {
+    if (!debouncedSearchQuery.trim()) {
+      setFilteredPatients(patients);
+      return;
+    }
+
+    const query = debouncedSearchQuery.toLowerCase().trim();
+    const filtered = patients.filter(patient => 
+      patient.name.toLowerCase().includes(query) ||
+      patient.regNo.toLowerCase().includes(query) ||
+      (patient.mobileNo && patient.mobileNo.includes(query))
+    );
+
+    setFilteredPatients(filtered);
     
-    // Mock API call
-    toast.success("Treatment record saved successfully", {
-      description: "The treatment information has been recorded.",
-    });
-    
-    setTreatmentSaved(true);
+    if (filtered.length === 0 && patients.length > 0 && query.length > 2) {
+      toast.info("No matching patients found", {
+        description: "Try a different search term or check the spelling.",
+      });
+    }
+  }, [debouncedSearchQuery, patients]);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -51,315 +92,117 @@ const Treatment = () => {
                 <ArrowLeft className="h-5 w-5" />
               </a>
             </Button>
-            <h1 className="text-3xl font-bold tracking-tight">Treatment Entry</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Patient Records</h1>
           </div>
-          
-          {patientFound && !treatmentSaved && (
-            <Button variant="outline" onClick={() => {
-              setPatientFound(false);
-              setSearchPerformed(false);
-            }}>
-              Change Patient
-            </Button>
-          )}
         </div>
         
-        {treatmentSaved ? (
-          <div className="health-card text-center py-12">
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-16 w-16 bg-health-success/20 rounded-full flex items-center justify-center text-health-success">
-                <Check className="h-8 w-8" />
-              </div>
-              
-              <div>
-                <h2 className="text-2xl font-bold">Treatment Recorded</h2>
-                <p className="text-muted-foreground mt-2">
-                  The treatment information has been successfully saved
-                </p>
-              </div>
-              
-              <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                <Button asChild>
-                  <a href="/treatment">
-                    <FileText className="mr-2 h-5 w-5" />
-                    New Treatment Entry
-                  </a>
-                </Button>
-                <Button variant="outline" asChild>
-                  <a href="/patients">
-                    <User className="mr-2 h-5 w-5" />
-                    View Patient List
-                  </a>
-                </Button>
-              </div>
+        <p className="text-muted-foreground">
+          Search for a patient to view or add treatment information
+        </p>
+        
+        <div className="w-full flex justify-center">
+          <div className="relative w-full max-w-md">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <Search className="h-4 w-4 text-muted-foreground" />
             </div>
+            <input
+              ref={searchInputRef}
+              type="text"
+              className="health-input pl-10 w-full"
+              placeholder="Search by name, registration number or phone"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
           </div>
-        ) : !patientFound ? (
-          <>
-            <p className="text-muted-foreground">
-              Search for a patient to enter treatment information
+        </div>
+        
+        {isLoading ? (
+          <div className="health-card text-center py-8">
+            <p className="text-lg">Loading patients...</p>
+          </div>
+        ) : error ? (
+          <div className="health-card text-center py-8">
+            <p className="text-lg text-health-danger">{error}</p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Retry
+            </Button>
+          </div>
+        ) : filteredPatients.length === 0 ? (
+          <div className="health-card text-center py-8">
+            <p className="text-lg">No patients found matching your search criteria</p>
+            <p className="text-muted-foreground mt-2">
+              Try searching with a different term or{" "}
+              <a href="/new-patient" className="text-primary hover:underline">
+                register a new patient
+              </a>
             </p>
-            
-            <div className="w-full flex justify-center">
-              <SearchBar onSearch={handleSearch} />
-            </div>
-            
-            {searchPerformed && !patientFound && (
-              <div className="health-card text-center py-8">
-                <p className="text-lg">No patient found matching your search criteria</p>
-                <p className="text-muted-foreground mt-2">
-                  Try searching with a different term or{" "}
-                  <a href="/new-patient" className="text-primary hover:underline">
-                    register a new patient
-                  </a>
-                </p>
-              </div>
-            )}
-          </>
+          </div>
         ) : (
-          <>
-            <div className="health-card">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <User className="h-6 w-6" />
+          <div className="space-y-4">
+            {filteredPatients.map((patient) => (
+              <div className="health-card" key={patient.regNo}>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <User className="h-6 w-6" />
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-semibold text-lg">{patient.name}</h3>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                        <span>{patient.age} yrs, {patient.gender}</span>
+                        <span className="flex items-center">
+                          <FileText className="h-3 w-3 mr-1" />
+                          {patient.regNo}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   
+                  <Link to={`/${patient.regNo}/visits`}>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Visit
+                    </Button>
+                  </Link>
+                </div>
+                
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-4 border-border">
                   <div>
-                    <h3 className="font-semibold text-lg">Arun Mehta</h3>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                      <span>45 yrs, Male</span>
-                      <span className="flex items-center">
-                        <FileText className="h-3 w-3 mr-1" />
-                        REG-2023-0042
-                      </span>
+                    <p className="text-sm text-muted-foreground">Phone</p>
+                    <p>{patient.mobileNo || "Not provided"}</p>
+                  </div>
+                  {patient.bloodGroup && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Blood Group</p>
+                      <p>{patient.bloodGroup}</p>
                     </div>
+                  )}
+                  <div>
+                    <p className="text-sm text-muted-foreground">Last Visit</p>
+                    <p className="flex items-center">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      {patient.lastVisit || "No record"}
+                    </p>
                   </div>
                 </div>
                 
-                <div className="status-critical px-3 py-1 rounded-full text-xs font-medium w-fit">
-                  Critical Attention
-                </div>
-              </div>
-              
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-4 border-border">
-                <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <p>9876543210</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Blood Group</p>
-                  <p>O+</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Last Visit</p>
-                  <p className="flex items-center">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    Today
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <form onSubmit={handleSaveTreatment} className="space-y-6">
-              <div className="health-card">
-                <h2 className="text-xl font-semibold mb-6">Treatment Information</h2>
-                
-                <Tabs defaultValue="outpatient" className="w-full mb-6">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="outpatient">Outpatient</TabsTrigger>
-                    <TabsTrigger value="inpatient">Inpatient</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="outpatient" className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label htmlFor="visitDate" className="text-sm font-medium">
-                          Visit Date <span className="text-health-danger">*</span>
-                        </label>
-                        <input 
-                          id="visitDate" 
-                          type="date" 
-                          className="health-input w-full"
-                          defaultValue={new Date().toISOString().split('T')[0]}
-                          required 
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <label htmlFor="visitTime" className="text-sm font-medium">
-                          Visit Time
-                        </label>
-                        <div className="flex items-center health-input">
-                          <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <input 
-                            id="visitTime" 
-                            type="time" 
-                            className="flex-1 outline-none bg-transparent" 
-                            defaultValue={new Date().toTimeString().slice(0, 5)}
-                          />
+                {patient.visits && patient.visits.length > 0 && (
+                  <div className="mt-6 border-t pt-4 border-border">
+                    <h4 className="font-medium mb-2">Recent Visits</h4>
+                    <div className="space-y-2">
+                      {patient.visits.slice(0, 2).map((visit, index) => (
+                        <div key={index} className="p-3 bg-muted rounded-md">
+                          <div className="text-sm"><strong>Investigation:</strong> {visit.investigation}</div>
+                          <div className="text-sm"><strong>Treatment:</strong> {visit.treatmentGiven}</div>
                         </div>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="inpatient" className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label htmlFor="admissionDate" className="text-sm font-medium">
-                          Admission Date <span className="text-health-danger">*</span>
-                        </label>
-                        <input 
-                          id="admissionDate" 
-                          type="date" 
-                          className="health-input w-full"
-                          defaultValue={new Date().toISOString().split('T')[0]}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <label htmlFor="wardNumber" className="text-sm font-medium">
-                          Ward/Room Number <span className="text-health-danger">*</span>
-                        </label>
-                        <input 
-                          id="wardNumber" 
-                          className="health-input w-full"
-                          placeholder="Enter ward/room" 
-                        />
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-                
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label htmlFor="bodyTemperature" className="text-sm font-medium">
-                        Body Temperature (°F)
-                      </label>
-                      <input 
-                        id="bodyTemperature" 
-                        type="number" 
-                        step="0.1"
-                        className="health-input w-full" 
-                        placeholder="Enter temperature"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label htmlFor="bloodPressure" className="text-sm font-medium">
-                        Blood Pressure (mm Hg)
-                      </label>
-                      <input 
-                        id="bloodPressure" 
-                        className="health-input w-full" 
-                        placeholder="e.g., 120/80"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label htmlFor="weight" className="text-sm font-medium">
-                        Weight (kg)
-                      </label>
-                      <input 
-                        id="weight" 
-                        type="number" 
-                        step="0.1"
-                        className="health-input w-full" 
-                        placeholder="Enter weight"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label htmlFor="pulseRate" className="text-sm font-medium">
-                        Pulse Rate (bpm)
-                      </label>
-                      <input 
-                        id="pulseRate" 
-                        type="number" 
-                        className="health-input w-full" 
-                        placeholder="Enter pulse rate"
-                      />
+                      ))}
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="chiefComplaints" className="text-sm font-medium">
-                      Chief Complaints <span className="text-health-danger">*</span>
-                    </label>
-                    <textarea 
-                      id="chiefComplaints" 
-                      className="health-input w-full h-24 resize-none" 
-                      placeholder="Enter chief complaints"
-                      required
-                    ></textarea>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="diagnosis" className="text-sm font-medium">
-                      Diagnosis <span className="text-health-danger">*</span>
-                    </label>
-                    <textarea 
-                      id="diagnosis" 
-                      className="health-input w-full h-24 resize-none" 
-                      placeholder="Enter diagnosis"
-                      required
-                    ></textarea>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="treatment" className="text-sm font-medium">
-                      Treatment Plan <span className="text-health-danger">*</span>
-                    </label>
-                    <textarea 
-                      id="treatment" 
-                      className="health-input w-full h-36 resize-none" 
-                      placeholder="Enter treatment plan"
-                      required
-                    ></textarea>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="followUpDate" className="text-sm font-medium">
-                      Follow-up Date
-                    </label>
-                    <input 
-                      id="followUpDate" 
-                      type="date" 
-                      className="health-input w-full" 
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="notes" className="text-sm font-medium">
-                      Additional Notes
-                    </label>
-                    <textarea 
-                      id="notes" 
-                      className="health-input w-full h-24 resize-none" 
-                      placeholder="Enter any additional notes"
-                    ></textarea>
-                  </div>
-                </div>
+                )}
               </div>
-              
-              <div className="flex justify-between">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    setPatientFound(false);
-                    setSearchPerformed(false);
-                  }}
-                >
-                  Change Patient
-                </Button>
-                <Button type="submit" size="lg">
-                  Save Treatment Record
-                </Button>
-              </div>
-            </form>
-          </>
+            ))}
+          </div>
         )}
       </div>
     </Layout>
@@ -367,3 +210,4 @@ const Treatment = () => {
 };
 
 export default Treatment;
+

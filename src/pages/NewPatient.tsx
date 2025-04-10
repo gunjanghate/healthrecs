@@ -31,13 +31,35 @@ const NewPatient = () => {
     previousOccupation: '',
     disablitiyStatus: '',
     otherAilments: {},
-    visits: [{ date: '', investigation: '', treatmentGiven: '' }]
+    
   });
   
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  
+    if (name === 'dob') {
+      const birthDate = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+  
+      setFormData({
+        ...formData,
+        dob: value,
+        age: age >= 0 ? age.toString() : ''
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
+  
 
   const handleAilmentChange = (e) => {
     const { name, checked } = e.target;
@@ -240,6 +262,7 @@ const NewPatient = () => {
                         className="health-input w-full"
                         placeholder="Enter age"
                         required
+                        readOnly
                       />
                     </div>
                     
