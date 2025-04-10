@@ -31,7 +31,7 @@ export function Header() {
     if (user?.role === "admin") {
       return [
         ...commonItems,
-        { label: "Settings", path: "/settings", icon: <Settings className="h-4 w-4 mr-1" strokeWidth={2.5} /> },
+       
       ];
     }
 

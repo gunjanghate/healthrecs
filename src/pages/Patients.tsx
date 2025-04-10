@@ -242,16 +242,6 @@ const Patients = () => {
                 </TabsTrigger>
               </TabsList>
               
-              <div className="hidden md:flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Filter className="mr-1 h-4 w-4" />
-                  Filters
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Plus className="mr-1 h-4 w-4" />
-                  Add Notes
-                </Button>
-              </div>
             </div>
 
             {isSearching ? (
