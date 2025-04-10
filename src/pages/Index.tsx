@@ -7,6 +7,7 @@ import { PatientCard } from "@/components/patients/PatientCard";
 import { useAuth } from "@/context/AuthContext";
 import { CalendarDays, FileText, ListFilter, Plus, User, UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom"; // Add this import for Link
 import {
   Dialog,
   DialogContent,
@@ -58,8 +59,13 @@ const Dashboard = () => {
         
         // Check if response.data exists and is an array
         if (response.data && Array.isArray(response.data)) {
-          setRecentPatients(response.data);
-          setTotalPatients(response.data.length);
+          // Sort by createdAt date (newest first)
+          const sortedPatients = [...response.data].sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
+          
+          setRecentPatients(sortedPatients);
+          setTotalPatients(sortedPatients.length);
         } else {
           // If the structure isn't as expected, initialize with empty arrays
           setRecentPatients([]);
@@ -132,6 +138,10 @@ const Dashboard = () => {
     };
   };
 
+  // Get only the first 3 patients for display
+  const recentPatientsToShow = recentPatients.slice(0, 3);
+  const hasMorePatients = recentPatients.length > 3;
+
   return (
     <Layout>
       <div className="space-y-8">
@@ -142,7 +152,6 @@ const Dashboard = () => {
               Welcome back, <span className="font-semibold dark:text-white/70 text-black/70">{user?.name || "User"}</span>
             </p>
           </div>
-
         </div>
 
         <div className="w-full flex justify-center">
@@ -227,15 +236,26 @@ const Dashboard = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Recent Patients</h2>
-
               </div>
               
-              
               <div className="space-y-4">
-                {recentPatients.length > 0 ? (
-                  recentPatients.map((patient) => (
-                    <PatientCard condition={"stable"} key={patient._id} {...adaptPatientForCard(patient)} />
-                  ))
+                {recentPatientsToShow.length > 0 ? (
+                  <>
+                    {recentPatientsToShow.map((patient) => (
+                      <PatientCard condition={"stable"} key={patient._id} {...adaptPatientForCard(patient)} />
+                    ))}
+                    
+                    {hasMorePatients && (
+                      <div className="flex justify-center mt-4">
+                        <Link to="/patients" className="text-cyan-500 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center gap-2">
+                          <span>View more patients</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </Link>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="text-center py-8 text-gray-500">
                     <p>No recent patients found.</p>
