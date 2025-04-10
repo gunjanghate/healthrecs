@@ -6,6 +6,7 @@ import { Filter, Plus, UserPlus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 // Define patient interface based on API response
 interface Patient {
@@ -176,10 +177,10 @@ const Patients = () => {
           </div>
           
           <Button size="lg" asChild>
-            <a href="https://healthrecs.vercel.app/new-patient">
+            <Link to="/new-patient">
               <UserPlus className="mr-2 h-5 w-5" />
               New Patient
-            </a>
+            </Link>
           </Button>
         </div>
 
