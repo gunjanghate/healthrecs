@@ -216,10 +216,7 @@ const PatientDetails = () => {
             Back to Patients
           </Button>
           
-          <div className="flex gap-2">
-            <Button variant="outline">Print Summary</Button>
-            <Button>Edit Patient</Button>
-          </div>
+      
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
