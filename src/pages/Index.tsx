@@ -271,23 +271,9 @@ text-black/70">{user?.name || "User"}</span>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Recent Patients</h2>
-                <Button variant="ghost" size="sm" asChild>
-                  <a href="/patients">
-                    View All
-                  </a>
-                </Button>
+   
               </div>
-              
-              <div className="flex items-center justify-between">
-                <Button variant="outline" size="sm">
-                  <ListFilter className="mr-1 h-4 w-4" />
-                  Filter
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Plus className="mr-1 h-4 w-4" />
-                  Add Patient Note
-                </Button>
-              </div>
+ 
               
               <div className="space-y-4">
                 {recentPatients.length > 0 ? (
